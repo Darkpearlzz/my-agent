@@ -29,3 +29,43 @@ export const getFileChangesInDirectoryTool = tool({
   inputSchema: fileChange,
   execute: getFileChangesInDirectory,
 });
+
+// Commit Message Generation Tool
+const commitMessageInput = z.object({
+  changes: z.string().min(1).describe("Summary or list of code changes"),
+});
+
+type CommitMessageInput = z.infer<typeof commitMessageInput>;
+
+async function generateCommitMessage({ changes }: CommitMessageInput) {
+  // Placeholder: Replace with LLM or more advanced logic as needed
+  const firstLine = changes.split("\n")[0] ?? "";
+  return `feat: ${firstLine.slice(0, 50)}...`;
+}
+
+export const generateCommitMessageTool = tool({
+  description: "Generates an ideal commit message from code changes summary",
+  inputSchema: commitMessageInput,
+  execute: generateCommitMessage,
+});
+
+// Markdown File Generation Tool
+const markdownFileInput = z.object({
+  title: z.string().min(1).describe("Title of the markdown file"),
+  content: z
+    .string()
+    .min(1)
+    .describe("Content to include in the markdown file"),
+});
+
+type MarkdownFileInput = z.infer<typeof markdownFileInput>;
+
+async function generateMarkdownFile({ title, content }: MarkdownFileInput) {
+  return `# ${title}\n\n${content}`;
+}
+
+export const generateMarkdownFileTool = tool({
+  description: "Generates a Markdown file from provided title and content",
+  inputSchema: markdownFileInput,
+  execute: generateMarkdownFile,
+});
